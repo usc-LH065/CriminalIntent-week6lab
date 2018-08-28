@@ -1,40 +1,62 @@
 package com.bignerdranch.android.criminalintent;
 
+
 import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Stores data as a singleton while application is in memory. Will be destroyed after
+ * app is stopped and memory is released
+ */
+
 public class CrimeLab {
-    private static CrimeLab sCrimelab;
+    private static CrimeLab sCrimeLab;
 
     private List<Crime> mCrimes;
 
-    public static CrimeLab get(Context context){
-        if (sCrimelab == null){
-            sCrimelab = new CrimeLab(context);
+    /**
+     * @param context of the application state
+     * @return existing or new CrimeLab (If one doesn't exist)
+     */
+    public static CrimeLab get(Context context) {
+        if (sCrimeLab == null) {
+            sCrimeLab = new CrimeLab(context);
         }
-        return sCrimelab;
+
+        return sCrimeLab;
     }
-    private CrimeLab(Context context){
-        mCrimes = new ArrayList<>();
-        for (int i = 0 ;i < 100; i++){
-            Crime crime = new Crime();
-            crime.setmTitle("Crime #" + i);
-            crime.setmSolved(i%2 == 0);
-            mCrimes.add(crime);
-        }
+
+    // Adds a crime to the list of crimes
+    public void addCrime(Crime c) {
+        mCrimes.add(c);
     }
+
+    public void deleteCrime(Crime crime) {
+        mCrimes.remove(crime);
+    }
+
+    public List<Crime> getCrimes() {
+        return mCrimes;
+    }
+
     public Crime getCrime(UUID id) {
-        for (Crime crime : mCrimes){
-            if(crime.getmId().equals(id)){
+        for (Crime crime : mCrimes) {
+            if (crime.getId().equals(id)) {
                 return crime;
             }
         }
+        // otherwise no crime by that id
         return null;
     }
-    public List<Crime> getmCrimes() {
-        return mCrimes;
+
+    /**
+     * Private constructor prevents more than one instance
+     * and can only be created from this class
+     */
+    private CrimeLab(Context context) {
+        mCrimes = new ArrayList<>();
     }
 }
